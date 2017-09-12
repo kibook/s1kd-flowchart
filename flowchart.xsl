@@ -7,6 +7,9 @@
   <!-- Node defaults. Can also be set invidiually for each type of node. -->
   <xsl:param name="node-style">solid</xsl:param>
   <xsl:param name="node-font-colour">black</xsl:param>
+  <!-- If node-style = filled, this will set the outline colour.
+       Otherwise, this sets the colour of all nodes. -->
+  <xsl:param name="node-colour"/>
 
   <!-- Edge defaults -->
   <xsl:param name="edge-style">solid</xsl:param>
@@ -101,8 +104,11 @@
   </xsl:template>
 
   <xsl:template match="*" mode="label">
+    <xsl:variable name="text">
+      <xsl:apply-templates/>
+    </xsl:variable>
     <xsl:call-template name="wrap-string">
-      <xsl:with-param name="str" select="normalize-space(.)"/>
+      <xsl:with-param name="str" select="normalize-space($text)"/>
       <xsl:with-param name="wrap-col" select="$word-wrap"/>
       <xsl:with-param name="break-mark"><xsl:text disable-output-escaping="yes">&#10;</xsl:text></xsl:with-param>
     </xsl:call-template>
@@ -141,9 +147,21 @@
     </xsl:if>
 
     <xsl:if test="$colour">
-      <xsl:text> </xsl:text>
-      <xsl:text>color=</xsl:text>
-      <xsl:value-of select="$colour"/>
+      <xsl:choose>
+        <xsl:when test="$node-colour">
+          <xsl:text> </xsl:text>
+          <xsl:text>color=</xsl:text>
+          <xsl:value-of select="$node-colour"/>
+          <xsl:text> </xsl:text>
+          <xsl:text>fillcolor=</xsl:text>
+          <xsl:value-of select="$colour"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:text> </xsl:text>
+          <xsl:text>color=</xsl:text>
+          <xsl:value-of select="$colour"/>
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:if>
 
     <xsl:if test="$style">
@@ -167,7 +185,7 @@
       <xsl:value-of select="$target"/>
     </xsl:if>
     
-      <xsl:text> [</xsl:text>
+    <xsl:text> [</xsl:text>
 
     <xsl:if test="$edge-label">
       <xsl:value-of select="$edge-label-type"/>
@@ -188,13 +206,13 @@
   </xsl:template>
 
   <!-- Graph definition -->
-  <xsl:template match="/">
+  <xsl:template match="dmodule">
     <xsl:text>digraph g {</xsl:text>
     <xsl:text>&#10;</xsl:text>
     <xsl:text>graph [splines=</xsl:text>
     <xsl:value-of select="$splines"/>
     <xsl:text>]&#10;</xsl:text>
-    <xsl:apply-templates/>
+    <xsl:apply-templates select="//isolationProcedure"/>
     <xsl:text>}</xsl:text>
   </xsl:template>
 
@@ -348,6 +366,49 @@
         </xsl:if>
       </xsl:with-param>
     </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template match="dmCode">
+    <xsl:value-of select="@modelIdentCode"/>
+    <xsl:text>-</xsl:text>
+    <xsl:value-of select="@systemDiffCode"/>
+    <xsl:text>-</xsl:text>
+    <xsl:value-of select="@systemCode"/>
+    <xsl:text>-</xsl:text>
+    <xsl:value-of select="@subSystemCode"/>
+    <xsl:value-of select="@subSubSystemCode"/>
+    <xsl:text>-</xsl:text>
+    <xsl:value-of select="@assyCode"/>
+    <xsl:text>-</xsl:text>
+    <xsl:value-of select="@disassyCode"/>
+    <xsl:value-of select="@disassyCodeVariant"/>
+    <xsl:text>-</xsl:text>
+    <xsl:value-of select="@infoCode"/>
+    <xsl:value-of select="@infoCodeVariant"/>
+    <xsl:text>-</xsl:text>
+    <xsl:value-of select="@itemLocationCode"/>
+    <xsl:if test="@learnCode">
+      <xsl:text>-</xsl:text>
+      <xsl:value-of select="@learnCode"/>
+      <xsl:value-of select="@learnEventCode"/>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="internalRef">
+    <xsl:variable name="target-id" select="@internalRefId"/>
+    <xsl:variable name="target" select="//*[@id=$target-id]"/>
+    <xsl:choose>
+      <xsl:when test="$target/shortName">
+        <xsl:value-of select="$target/shortName"/>
+      </xsl:when>
+      <xsl:when test="$target/name">
+        <xsl:value-of select="$target/name"/>
+      </xsl:when>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="externalPubRef">
+    <xsl:value-of select="externalPubRefIdent/externalPubCode"/>
   </xsl:template>
 
 </xsl:stylesheet>

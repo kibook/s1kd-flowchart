@@ -47,7 +47,9 @@
         <isolationProcedure>
           <preliminaryRqmts>
             <reqCondGroup>
-              <noConds/>
+              <reqCondNoRef>
+                <reqCond>Car will not start</reqCond>
+              </reqCondNoRef>
             </reqCondGroup>
             <reqSupportEquips>
               <noSupportEquips/>
@@ -64,7 +66,6 @@
           </preliminaryRqmts>
           <isolationMainProcedure>
             <isolationStep id="stp-0001">
-              <action>Car will not start</action>
               <isolationStepQuestion>Do warning lights appear?</isolationStepQuestion>
               <isolationStepAnswer>
                 <yesNoAnswer>
