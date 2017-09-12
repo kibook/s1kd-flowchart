@@ -1,0 +1,18 @@
+digraph g {
+graph [splines=ortho]
+{idm6197904 [label="Car will not start" shape=rectangle color=green style=solid fontcolor=black]} -> idm5877872 [ style=solid]
+{idm5877872 [label="Do warning lights appear?" shape=diamond color=blue style=solid fontcolor=black]} -> idm5875008 [xlabel="Yes" style=solid]
+{idm5877872 [ style=solid fontcolor=black]} -> idm5874000 [xlabel="No" style=solid]
+{idm5875008 [label="Battery is flat, call 
+mechanic" shape=rectangle color=red style=solid fontcolor=black]} [ style=solid]
+{idm5874000 [label="Lock & unlock car to disable 
+immobiliser and try starting 
+again" shape=rectangle color=red style=solid fontcolor=black]} -> idm5873456 [ style=solid]
+{idm5873456 [label="Does the engine still not 
+start?" shape=diamond color=blue style=solid fontcolor=black]} -> idm5870688 [xlabel="Yes" style=solid]
+{idm5873456 [ style=solid fontcolor=black]} -> idm5869680 [xlabel="No" style=solid]
+{idm5870688 [label="Engine is flooded/other 
+technical issue, call 
+mechanic" shape=rectangle color=red style=solid fontcolor=black]} [ style=solid]
+{idm5869680 [label="Car is working" shape=rectangle color=red style=solid fontcolor=black]} [ style=solid]
+}
