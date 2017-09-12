@@ -4,9 +4,11 @@
   <!-- Convert S1000D fault isolation procedures to flowcharts via the Graphviz
        DOT language -->
 
-  <!-- Node defaults. Can also be set invidiually for each type of node. -->
+  <!-- Node defaults -->
   <xsl:param name="node-style">solid</xsl:param>
   <xsl:param name="node-font-colour">black</xsl:param>
+  <xsl:param name="node-font-family"/>
+  <xsl:param name="node-font-size"/>
   <!-- If node-style = filled, this will set the outline colour.
        Otherwise, this sets the colour of all nodes. -->
   <xsl:param name="node-colour"/>
@@ -14,6 +16,8 @@
   <!-- Edge defaults -->
   <xsl:param name="edge-style">solid</xsl:param>
   <xsl:param name="edge-font-colour">black</xsl:param>
+  <xsl:param name="edge-font-family"/>
+  <xsl:param name="edge-font-size"/>
 
   <!-- Action nodes (element <action>) -->
   <xsl:param name="action-colour">red</xsl:param>
@@ -124,9 +128,13 @@
     <xsl:param name="colour"/>
     <xsl:param name="style" select="$node-style"/>
     <xsl:param name="font-colour" select="$node-font-colour"/>
+    <xsl:param name="font-family" select="$node-font-family"/>
+    <xsl:param name="font-size" select="$node-font-size"/>
     <xsl:param name="target"/>
     <xsl:param name="edge-label"/>
     <xsl:param name="edge-style" select="$edge-style"/>
+    <xsl:param name="edge-font-family" select="$edge-font-family"/>
+    <xsl:param name="edge-font-size" select="$edge-font-size"/>
 
     <xsl:text>{</xsl:text>
     <xsl:value-of select="$id"/>
@@ -164,6 +172,19 @@
       </xsl:choose>
     </xsl:if>
 
+    <xsl:if test="$font-family">
+      <xsl:text> </xsl:text>
+      <xsl:text>fontname="</xsl:text>
+      <xsl:value-of select="$font-family"/>
+      <xsl:text>"</xsl:text>
+    </xsl:if>
+
+    <xsl:if test="$font-size">
+      <xsl:text> </xsl:text>
+      <xsl:text>fontsize=</xsl:text>
+      <xsl:value-of select="$font-size"/>
+    </xsl:if>
+
     <xsl:if test="$style">
       <xsl:text> </xsl:text>
       <xsl:text>style=</xsl:text>
@@ -198,6 +219,19 @@
       <xsl:text> </xsl:text>
       <xsl:text>style=</xsl:text>
       <xsl:value-of select="$edge-style"/>
+    </xsl:if>
+
+    <xsl:if test="$edge-font-family">
+      <xsl:text> </xsl:text>
+      <xsl:text>fontname="</xsl:text>
+      <xsl:value-of select="$edge-font-family"/>
+      <xsl:text>"</xsl:text>
+    </xsl:if>
+
+    <xsl:if test="$edge-font-size">
+      <xsl:text> </xsl:text>
+      <xsl:text>fontsize=</xsl:text>
+      <xsl:value-of select="$edge-font-size"/>
     </xsl:if>
 
     <xsl:text>]</xsl:text>
@@ -351,7 +385,7 @@
 
   <!-- Each close requirement links to the next, except the last which has not
        destination. -->
-  <xsl:template match="closeRqmts/reqCondGroup/*[not(self::noConds)]">
+  <xsl:template match="closeRqmts/reqCondGroup/*">
     <xsl:call-template name="dot-node">
       <xsl:with-param name="label">
         <xsl:apply-templates select="reqCond" mode="label"/>
@@ -368,6 +402,19 @@
     </xsl:call-template>
   </xsl:template>
 
+  <!-- If a question links to the closeRqmts and there are none, create a dummy
+       action for it to connect to. -->
+  <xsl:template match="closeRqmts/reqCondGroup/noConds">
+    <xsl:call-template name="dot-node">
+      <xsl:with-param name="label">End of procedure</xsl:with-param>
+      <xsl:with-param name="shape" select="$action-shape"/>
+      <xsl:with-param name="colour" select="$action-colour"/>
+      <xsl:with-param name="style" select="$action-style"/>
+      <xsl:with-param name="font-colour" select="$close-font-colour"/>
+    </xsl:call-template>
+  </xsl:template>
+
+  <!-- Display the dmCode for dmRef elements in nodes -->
   <xsl:template match="dmCode">
     <xsl:value-of select="@modelIdentCode"/>
     <xsl:text>-</xsl:text>
@@ -394,6 +441,7 @@
     </xsl:if>
   </xsl:template>
 
+  <!-- Handle references to tools/supplies -->
   <xsl:template match="internalRef">
     <xsl:variable name="target-id" select="@internalRefId"/>
     <xsl:variable name="target" select="//*[@id=$target-id]"/>
