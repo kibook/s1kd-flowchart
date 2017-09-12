@@ -18,6 +18,7 @@
   <xsl:param name="edge-font-colour">black</xsl:param>
   <xsl:param name="edge-font-family"/>
   <xsl:param name="edge-font-size"/>
+  <xsl:param name="edge-colour"/>
 
   <!-- Action nodes (element <action>) -->
   <xsl:param name="action-colour">red</xsl:param>
@@ -153,6 +154,7 @@
     <xsl:param name="font-size" select="$node-font-size"/>
     <xsl:param name="target"/>
     <xsl:param name="edge-label"/>
+    <xsl:param name="edge-colour" select="$edge-colour"/>
     <xsl:param name="edge-style" select="$edge-style"/>
     <xsl:param name="edge-font-family" select="$edge-font-family"/>
     <xsl:param name="edge-font-size" select="$edge-font-size"/>
@@ -234,6 +236,12 @@
       <xsl:text>="</xsl:text>
       <xsl:value-of select="$edge-label"/>
       <xsl:text>"</xsl:text>
+    </xsl:if>
+
+    <xsl:if test="$edge-colour">
+      <xsl:text> </xsl:text>
+      <xsl:text>color=</xsl:text>
+      <xsl:value-of select="$edge-colour"/>
     </xsl:if>
 
     <xsl:if test="$edge-style">
