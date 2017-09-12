@@ -43,6 +43,18 @@
   <xsl:param name="close-style" select="$node-style"/>
   <xsl:param name="close-font-colour" select="$node-font-colour"/>
 
+  <!-- When true, answers (yes/no/choices) are displayed as their own nodes.
+
+       When false, answers are written as labels on the edge between the step
+       and next action. -->
+  <xsl:param name="answer-nodes" select="false()"/>
+
+  <!-- Properties of answer nodes if $answer-nodes = true() -->
+  <xsl:param name="answer-colour">yellow</xsl:param>
+  <xsl:param name="answer-shape">diamond</xsl:param>
+  <xsl:param name="answer-style" select="$node-style"/>
+  <xsl:param name="answer-font-colour" select="$node-font-colour"/>
+
   <!-- Wrap long labels to this many characters -->
   <xsl:param name="word-wrap">30</xsl:param>
 
@@ -329,33 +341,79 @@
 
   <!-- Yes/No question nodes -->
   <xsl:template match="isolationStepQuestion">
-    <xsl:variable name="yes" select="../isolationStepAnswer/yesNoAnswer/yesAnswer/@nextActionRefId"/>
-    <xsl:variable name="no" select="../isolationStepAnswer/yesNoAnswer/noAnswer/@nextActionRefId"/>
-    <xsl:call-template name="dot-node">
-      <xsl:with-param name="id">
-        <xsl:apply-templates select="." mode="id"/>
-      </xsl:with-param>
-      <xsl:with-param name="label">
-        <xsl:apply-templates select="." mode="label"/>
-      </xsl:with-param>
-      <xsl:with-param name="shape" select="$question-shape"/>
-      <xsl:with-param name="colour" select="$question-colour"/>
-      <xsl:with-param name="style" select="$question-style"/>
-      <xsl:with-param name="font-colour" select="$question-font-colour"/>
-      <xsl:with-param name="target">
-        <xsl:apply-templates select="//*[@id=$yes]" mode="id"/>
-      </xsl:with-param>
-      <xsl:with-param name="edge-label">Yes</xsl:with-param>
-    </xsl:call-template>
-    <xsl:call-template name="dot-node">
-      <xsl:with-param name="id">
-        <xsl:apply-templates select="." mode="id"/>
-      </xsl:with-param>
-      <xsl:with-param name="target">
-        <xsl:apply-templates select="//*[@id=$no]" mode="id"/>
-      </xsl:with-param>
-      <xsl:with-param name="edge-label">No</xsl:with-param>
-    </xsl:call-template>
+    <xsl:choose>
+      <xsl:when test="$answer-nodes">
+        <xsl:call-template name="dot-node">
+          <xsl:with-param name="label">
+            <xsl:apply-templates select="." mode="label"/>
+          </xsl:with-param>
+          <xsl:with-param name="shape" select="$question-shape"/>
+          <xsl:with-param name="colour" select="$question-colour"/>
+          <xsl:with-param name="style" select="$question-style"/>
+          <xsl:with-param name="font-colour" select="$answer-font-colour"/>
+        </xsl:call-template>
+        <xsl:call-template name="dot-node">
+          <xsl:with-param name="target">
+            <xsl:apply-templates select="../isolationStepAnswer/yesNoAnswer/yesAnswer" mode="id"/>
+          </xsl:with-param>
+        </xsl:call-template>
+        <xsl:call-template name="dot-node">
+          <xsl:with-param name="target">
+            <xsl:apply-templates select="../isolationStepAnswer/yesNoAnswer/noAnswer" mode="id"/>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:variable name="yes" select="../isolationStepAnswer/yesNoAnswer/yesAnswer/@nextActionRefId"/>
+        <xsl:variable name="no" select="../isolationStepAnswer/yesNoAnswer/noAnswer/@nextActionRefId"/>
+        <xsl:call-template name="dot-node">
+          <xsl:with-param name="id">
+            <xsl:apply-templates select="." mode="id"/>
+          </xsl:with-param>
+          <xsl:with-param name="label">
+            <xsl:apply-templates select="." mode="label"/>
+          </xsl:with-param>
+          <xsl:with-param name="shape" select="$question-shape"/>
+          <xsl:with-param name="colour" select="$question-colour"/>
+          <xsl:with-param name="style" select="$question-style"/>
+          <xsl:with-param name="font-colour" select="$question-font-colour"/>
+          <xsl:with-param name="target">
+            <xsl:apply-templates select="//*[@id=$yes]" mode="id"/>
+          </xsl:with-param>
+          <xsl:with-param name="edge-label">Yes</xsl:with-param>
+        </xsl:call-template>
+        <xsl:call-template name="dot-node">
+          <xsl:with-param name="id">
+            <xsl:apply-templates select="." mode="id"/>
+          </xsl:with-param>
+          <xsl:with-param name="target">
+            <xsl:apply-templates select="//*[@id=$no]" mode="id"/>
+          </xsl:with-param>
+          <xsl:with-param name="edge-label">No</xsl:with-param>
+        </xsl:call-template>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="yesAnswer|noAnswer">
+    <xsl:if test="$answer-nodes">
+      <xsl:variable name="id" select="@nextActionRefId"/>
+      <xsl:call-template name="dot-node">
+        <xsl:with-param name="label">
+          <xsl:choose>
+            <xsl:when test="self::yesAnswer">Yes</xsl:when>
+            <xsl:when test="self::noAnswer">No</xsl:when>
+          </xsl:choose>
+        </xsl:with-param>
+        <xsl:with-param name="shape" select="$answer-shape"/>
+        <xsl:with-param name="colour" select="$answer-colour"/>
+        <xsl:with-param name="style" select="$answer-style"/>
+        <xsl:with-param name="font-colour" select="$answer-font-colour"/>
+        <xsl:with-param name="target">
+          <xsl:apply-templates select="//*[@id=$id]" mode="id"/>
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
   </xsl:template>
 
   <!-- Multiple choice question nodes -->
@@ -374,17 +432,47 @@
       <xsl:with-param name="font-colour" select="$question-font-colour"/>
     </xsl:call-template>
     <xsl:for-each select="following-sibling::isolationStepAnswer/listOfChoices/choice">
-      <xsl:variable name="next" select="@nextActionRefId"/>
+      <xsl:choose>
+        <xsl:when test="$answer-nodes">
+          <xsl:call-template name="dot-node">
+            <xsl:with-param name="id" select="$id"/>
+            <xsl:with-param name="target">
+              <xsl:apply-templates select="." mode="id"/>
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:variable name="next" select="@nextActionRefId"/>
+          <xsl:call-template name="dot-node">
+            <xsl:with-param name="id" select="$id"/>
+            <xsl:with-param name="target">
+              <xsl:apply-templates select="//*[@id=$next]" mode="id"/>
+            </xsl:with-param>
+            <xsl:with-param name="edge-label">
+              <xsl:apply-templates select="." mode="label"/>
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="choice">
+    <xsl:if test="$answer-nodes">
+      <xsl:variable name="id" select="@nextActionRefId"/>
       <xsl:call-template name="dot-node">
-        <xsl:with-param name="id" select="$id"/>
-        <xsl:with-param name="target">
-          <xsl:apply-templates select="//*[@id=$next]" mode="id"/>
-        </xsl:with-param>
-        <xsl:with-param name="edge-label">
+        <xsl:with-param name="label">
           <xsl:apply-templates select="." mode="label"/>
         </xsl:with-param>
+        <xsl:with-param name="shape" select="$answer-shape"/>
+        <xsl:with-param name="colour" select="$answer-colour"/>
+        <xsl:with-param name="style" select="$answer-style"/>
+        <xsl:with-param name="font-colour" select="$answer-font-colour"/>
+        <xsl:with-param name="target">
+          <xsl:apply-templates select="//*[@id=$id]" mode="id"/>
+        </xsl:with-param>
       </xsl:call-template>
-    </xsl:for-each>
+    </xsl:if>
   </xsl:template>
 
   <!-- Link to the first condition -->
@@ -472,11 +560,6 @@
   <xsl:template match="externalPubRef">
     <xsl:value-of select="externalPubRefIdent/externalPubCode"/>
   </xsl:template>
-
-  <!-- Ignore empty text nodes (extra whitespace) in action content. -->
-  <!--<xsl:template match="action" mode="label">
-    <xsl:apply-templates select="*|text()[normalize-space(.) != '']"/>
-  </xsl:template>-->
 
   <!-- Handle randomLists in actions -->
   <xsl:template match="randomList">
