@@ -55,6 +55,15 @@
   <!-- Use normal or external labels for nodes/edges -->
   <xsl:param name="node-label-type">label</xsl:param>
   <xsl:param name="edge-label-type">xlabel</xsl:param>
+
+  <!-- When true, answers linking to the closeRqmts element when there are no
+       close requirements (noConds) are connected to a 'dummy' catch-all node.
+
+       When false, these answers are not displayed in the graph, edges
+       connecting to the 'empty' closeRqmts will be omitted. -->
+  <xsl:param name="dummy-noconds-action" select="false()"/>
+  <!-- The label for the 'dummy' node described above. -->
+  <xsl:param name="dummy-noconds-label">End of procedure</xsl:param>
   
   <xsl:output method="text"/>
 
@@ -109,10 +118,10 @@
 
   <xsl:template match="*" mode="label">
     <xsl:variable name="text">
-      <xsl:apply-templates/>
+      <xsl:apply-templates select="*|text()[normalize-space(.) != '']"/>
     </xsl:variable>
     <xsl:call-template name="wrap-string">
-      <xsl:with-param name="str" select="normalize-space($text)"/>
+      <xsl:with-param name="str" select="$text"/>
       <xsl:with-param name="wrap-col" select="$word-wrap"/>
       <xsl:with-param name="break-mark"><xsl:text disable-output-escaping="yes">&#10;</xsl:text></xsl:with-param>
     </xsl:call-template>
@@ -380,7 +389,10 @@
 
   <!-- Link to the first condition -->
   <xsl:template match="closeRqmts" mode="id">
-    <xsl:apply-templates select="reqCondGroup/*[1]" mode="id"/>
+    <xsl:variable name="target" select="reqCondGroup/*[1]"/>
+    <xsl:if test="name($target) != 'noConds' or $dummy-noconds-action">
+      <xsl:apply-templates select="$target" mode="id"/>
+    </xsl:if>
   </xsl:template>
 
   <!-- Each close requirement links to the next, except the last which has not
@@ -405,13 +417,15 @@
   <!-- If a question links to the closeRqmts and there are none, create a dummy
        action for it to connect to. -->
   <xsl:template match="closeRqmts/reqCondGroup/noConds">
-    <xsl:call-template name="dot-node">
-      <xsl:with-param name="label">End of procedure</xsl:with-param>
-      <xsl:with-param name="shape" select="$action-shape"/>
-      <xsl:with-param name="colour" select="$action-colour"/>
-      <xsl:with-param name="style" select="$action-style"/>
-      <xsl:with-param name="font-colour" select="$close-font-colour"/>
-    </xsl:call-template>
+    <xsl:if test="$dummy-noconds-action">
+      <xsl:call-template name="dot-node">
+        <xsl:with-param name="label" select="$dummy-noconds-label"/>
+        <xsl:with-param name="shape" select="$action-shape"/>
+        <xsl:with-param name="colour" select="$action-colour"/>
+        <xsl:with-param name="style" select="$action-style"/>
+        <xsl:with-param name="font-colour" select="$close-font-colour"/>
+      </xsl:call-template>
+    </xsl:if>
   </xsl:template>
 
   <!-- Display the dmCode for dmRef elements in nodes -->
@@ -457,6 +471,27 @@
 
   <xsl:template match="externalPubRef">
     <xsl:value-of select="externalPubRefIdent/externalPubCode"/>
+  </xsl:template>
+
+  <!-- Ignore empty text nodes (extra whitespace) in action content. -->
+  <!--<xsl:template match="action" mode="label">
+    <xsl:apply-templates select="*|text()[normalize-space(.) != '']"/>
+  </xsl:template>-->
+
+  <!-- Handle randomLists in actions -->
+  <xsl:template match="randomList">
+    <xsl:if test="normalize-space(preceding-sibling::text()) != ''">
+      <xsl:text>&#10;&#10;</xsl:text>
+    </xsl:if>
+    <xsl:apply-templates select="*"/>
+  </xsl:template>
+
+  <xsl:template match="listItem">
+    <xsl:for-each select="para">
+      <xsl:apply-templates/>
+      <xsl:text>&#10;</xsl:text>
+    </xsl:for-each>
+    <xsl:text>&#10;</xsl:text>
   </xsl:template>
 
 </xsl:stylesheet>
