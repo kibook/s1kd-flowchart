@@ -25,13 +25,13 @@
   <xsl:param name="question-font-colour" select="$node-font-colour"/>
 
   <!-- Preliminary action nodes -->
-  <xsl:param name="preliminary-colour">red</xsl:param>
+  <xsl:param name="preliminary-colour">green</xsl:param>
   <xsl:param name="preliminary-shape">rectangle</xsl:param>
   <xsl:param name="preliminary-style" select="$node-style"/>
   <xsl:param name="preliminary-font-colour" select="$node-font-colour"/>
 
   <!-- Requirements after job completion nodes -->
-  <xsl:param name="close-colour">red</xsl:param>
+  <xsl:param name="close-colour">violet</xsl:param>
   <xsl:param name="close-shape">rectangle</xsl:param>
   <xsl:param name="close-style" select="$node-style"/>
   <xsl:param name="close-font-colour" select="$node-font-colour"/>
