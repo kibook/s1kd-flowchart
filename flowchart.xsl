@@ -276,7 +276,9 @@
 
   <!-- Graph definition -->
   <xsl:template match="dmodule">
-    <xsl:text>digraph g {</xsl:text>
+    <xsl:text>digraph "</xsl:text>
+    <xsl:apply-templates select="//dmAddressItems/dmTitle"/>
+    <xsl:text>" {</xsl:text>
     <xsl:text>&#10;</xsl:text>
     <xsl:text>graph [splines=</xsl:text>
     <xsl:value-of select="$splines"/>
@@ -634,6 +636,14 @@
 
   <xsl:template match="verbatimText">
     <xsl:apply-templates/>
+  </xsl:template>
+
+  <xsl:template match="dmTitle">
+    <xsl:value-of select="techName"/>
+    <xsl:if test="infoName">
+      <xsl:text> - </xsl:text>
+      <xsl:value-of select="infoName"/>
+    </xsl:if>
   </xsl:template>
 
 </xsl:stylesheet>
