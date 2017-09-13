@@ -210,8 +210,9 @@
 
     <xsl:if test="$style">
       <xsl:text> </xsl:text>
-      <xsl:text>style=</xsl:text>
+      <xsl:text>style="</xsl:text>
       <xsl:value-of select="$style"/>
+      <xsl:text>"</xsl:text>
     </xsl:if>
 
     <xsl:if test="$font-colour">
@@ -358,7 +359,7 @@
           <xsl:with-param name="shape" select="$question-shape"/>
           <xsl:with-param name="colour" select="$question-colour"/>
           <xsl:with-param name="style" select="$question-style"/>
-          <xsl:with-param name="font-colour" select="$answer-font-colour"/>
+          <xsl:with-param name="font-colour" select="$question-font-colour"/>
         </xsl:call-template>
         <xsl:call-template name="dot-node">
           <xsl:with-param name="target">
