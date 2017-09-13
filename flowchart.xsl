@@ -153,6 +153,7 @@
     <xsl:param name="font-family" select="$node-font-family"/>
     <xsl:param name="font-size" select="$node-font-size"/>
     <xsl:param name="target"/>
+    <xsl:param name="tooltip"/>
     <xsl:param name="edge-label"/>
     <xsl:param name="edge-colour" select="$edge-colour"/>
     <xsl:param name="edge-style" select="$edge-style"/>
@@ -173,19 +174,16 @@
     </xsl:if>
 
     <xsl:if test="$shape">
-      <xsl:text> </xsl:text>
-      <xsl:text>shape=</xsl:text>
+      <xsl:text> shape=</xsl:text>
       <xsl:value-of select="$shape"/>
     </xsl:if>
 
     <xsl:if test="$colour">
       <xsl:choose>
         <xsl:when test="$node-colour">
-          <xsl:text> </xsl:text>
-          <xsl:text>color=</xsl:text>
+          <xsl:text> color=</xsl:text>
           <xsl:value-of select="$node-colour"/>
-          <xsl:text> </xsl:text>
-          <xsl:text>fillcolor=</xsl:text>
+          <xsl:text> fillcolor=</xsl:text>
           <xsl:value-of select="$colour"/>
         </xsl:when>
         <xsl:otherwise>
@@ -197,29 +195,31 @@
     </xsl:if>
 
     <xsl:if test="$font-family">
-      <xsl:text> </xsl:text>
-      <xsl:text>fontname="</xsl:text>
+      <xsl:text> fontname="</xsl:text>
       <xsl:value-of select="$font-family"/>
       <xsl:text>"</xsl:text>
     </xsl:if>
 
     <xsl:if test="$font-size">
-      <xsl:text> </xsl:text>
-      <xsl:text>fontsize=</xsl:text>
+      <xsl:text> fontsize=</xsl:text>
       <xsl:value-of select="$font-size"/>
     </xsl:if>
 
     <xsl:if test="$style">
-      <xsl:text> </xsl:text>
-      <xsl:text>style="</xsl:text>
+      <xsl:text> style="</xsl:text>
       <xsl:value-of select="$style"/>
       <xsl:text>"</xsl:text>
     </xsl:if>
 
     <xsl:if test="$font-colour">
-      <xsl:text> </xsl:text>
-      <xsl:text>fontcolor=</xsl:text>
+      <xsl:text> fontcolor=</xsl:text>
       <xsl:value-of select="$font-colour"/>
+    </xsl:if>
+
+    <xsl:if test="$tooltip">
+      <xsl:text> tooltip="</xsl:text>
+      <xsl:value-of select="$tooltip"/>
+      <xsl:text>"</xsl:text>
     </xsl:if>
 
     <xsl:text>]</xsl:text>
@@ -352,6 +352,10 @@
           </xsl:when>
         </xsl:choose>
       </xsl:with-param>
+      <xsl:with-param name="tooltip">
+        <xsl:text>Step </xsl:text>
+        <xsl:apply-templates select="." mode="number"/>
+      </xsl:with-param>
     </xsl:call-template>
   </xsl:template>
 
@@ -379,6 +383,10 @@
             <xsl:apply-templates select="../isolationStepAnswer/yesNoAnswer/noAnswer" mode="id"/>
           </xsl:with-param>
           <xsl:with-param name="edge-arrow">none</xsl:with-param>
+          <xsl:with-param name="tooltip">
+            <xsl:text>Step </xsl:text>
+            <xsl:apply-templates select="." mode="number"/>
+          </xsl:with-param>
         </xsl:call-template>
       </xsl:when>
       <xsl:otherwise>
@@ -402,6 +410,10 @@
             <xsl:apply-templates select="//*[@id=$no]" mode="id"/>
           </xsl:with-param>
           <xsl:with-param name="edge-label">No</xsl:with-param>
+          <xsl:with-param name="tooltip">
+            <xsl:text>Step </xsl:text>
+            <xsl:apply-templates select="." mode="number"/>
+          </xsl:with-param>
         </xsl:call-template>
       </xsl:otherwise>
     </xsl:choose>
@@ -423,6 +435,10 @@
         <xsl:with-param name="font-colour" select="$answer-font-colour"/>
         <xsl:with-param name="target">
           <xsl:apply-templates select="//*[@id=$id]" mode="id"/>
+        </xsl:with-param>
+        <xsl:with-param name="tooltip">
+          <xsl:text>Step </xsl:text>
+          <xsl:apply-templates select="." mode="number"/>
         </xsl:with-param>
       </xsl:call-template>
     </xsl:if>
@@ -511,6 +527,10 @@
           <xsl:apply-templates select="following-sibling::*" mode="id"/>
         </xsl:if>
       </xsl:with-param>
+      <xsl:with-param name="tooltip">
+        <xsl:text>Step </xsl:text>
+        <xsl:apply-templates select="." mode="number"/>
+      </xsl:with-param>
     </xsl:call-template>
   </xsl:template>
 
@@ -529,6 +549,10 @@
   </xsl:template>
 
   <!-- Display the dmCode for dmRef elements in nodes -->
+  <xsl:template match="dmRef">
+    <xsl:apply-templates select="dmRefIdent/dmCode"/>
+  </xsl:template>
+
   <xsl:template match="dmCode">
     <xsl:value-of select="@modelIdentCode"/>
     <xsl:text>-</xsl:text>
@@ -644,6 +668,27 @@
       <xsl:text> - </xsl:text>
       <xsl:value-of select="infoName"/>
     </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="action|
+                       isolationStepQuestion|
+                       closeRqmts/reqCondGroup/reqCondNoRef|
+                       closeRqmts/reqCondGroup/reqCondDm|
+                       closeRqmts/reqCondGroup/reqCondPm|
+                       closeRqmts/reqCondGroup/reqCondExternalPub" mode="number">
+    <xsl:number count="action|
+                       isolationStepQuestion|
+                       closeRqmts/reqCondGroup/reqCondNoRef|
+                       closeRqmts/reqCondGroup/reqCondDm|
+                       closeRqmts/reqCondGroup/reqCondPm|
+                       closeRqmts/reqCondGroup/reqCondExternalPub"
+                from="isolationProcedure" level="any"/>
+  </xsl:template>
+
+  <xsl:template match="yesAnswer|noAnswer" mode="number">
+    <xsl:apply-templates select="ancestor::isolationStep/isolationStepQuestion" mode="number"/>
+    <xsl:text>.</xsl:text>
+    <xsl:number count="yesAnswer|noAnswer" level="single"/>
   </xsl:template>
 
 </xsl:stylesheet>
