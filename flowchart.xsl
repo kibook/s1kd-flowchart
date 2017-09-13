@@ -567,8 +567,20 @@
     </xsl:choose>
   </xsl:template>
 
+  <!-- Display externalPubCode of externalPubRefs -->
   <xsl:template match="externalPubRef">
     <xsl:value-of select="externalPubRefIdent/externalPubCode"/>
+  </xsl:template>
+
+  <!-- Display pmCode of pmRefs -->
+  <xsl:template match="pmCode">
+    <xsl:value-of select="@modelIdentCode"/>
+    <xsl:text>-</xsl:text>
+    <xsl:value-of select="@pmIssuer"/>
+    <xsl:text>-</xsl:text>
+    <xsl:value-of select="@pmNumber"/>
+    <xsl:text>-</xsl:text>
+    <xsl:value-of select="@pmVolume"/>
   </xsl:template>
 
   <!-- Handle randomLists in actions -->
@@ -585,6 +597,43 @@
       <xsl:text>&#10;</xsl:text>
     </xsl:for-each>
     <xsl:text>&#10;</xsl:text>
+  </xsl:template>
+
+  <!-- Handle additional inline text elements.
+
+       TODO: Use HTML-like labels to better handle some of these elements. -->
+
+  <xsl:template match="emphasis">
+    <xsl:text>*</xsl:text>
+    <xsl:apply-templates/>
+    <xsl:text>*</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="inlineSignificantData">
+    <xsl:apply-templates/>
+  </xsl:template>
+
+  <xsl:template match="superScript">
+    <xsl:text>^</xsl:text>
+    <xsl:apply-templates/>
+  </xsl:template>
+
+  <xsl:template match="subScript">
+    <xsl:text>(</xsl:text>
+    <xsl:apply-templates/>
+    <xsl:text>)</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="acronym">
+    <xsl:apply-templates select="acronymTerm"/>
+  </xsl:template>
+
+  <xsl:template match="acronymTerm">
+    <xsl:apply-templates/>
+  </xsl:template>
+
+  <xsl:template match="verbatimText">
+    <xsl:apply-templates/>
   </xsl:template>
 
 </xsl:stylesheet>

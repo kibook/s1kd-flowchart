@@ -1,18 +1,18 @@
 digraph g {
 graph [splines=ortho]
-{idm6323392 [label="Car will not start" shape=rectangle color=green style="solid" fontcolor=black]} -> idm5796656 [ style="solid"]
-{idm5796656 [label="Do warning lights appear?" shape=diamond color=blue style="solid" fontcolor=black]} -> idm5793888 [xlabel="Yes" style="solid"]
-{idm5796656 [ style="solid" fontcolor=black]} -> idm5792880 [xlabel="No" style="solid"]
-{idm5793888 [label="Battery is flat, call 
+{idm6153984 [label="Car will not start" shape=rectangle color=green style="solid" fontcolor=black]} -> idm5769312 [ style="solid"]
+{idm5769312 [label="Do warning lights appear?" shape=diamond color=blue style="solid" fontcolor=black]} -> idm5766448 [xlabel="Yes" style="solid"]
+{idm5769312 [ style="solid" fontcolor=black]} -> idm5765440 [xlabel="No" style="solid"]
+{idm5766448 [label="Battery is flat, call 
 mechanic" shape=rectangle color=red style="solid" fontcolor=black]} [ style="solid"]
-{idm5792880 [label="Lock & unlock car to disable 
+{idm5765440 [label="Lock & unlock car to disable 
 immobiliser and try starting 
-again" shape=rectangle color=red style="solid" fontcolor=black]} -> idm5792336 [ style="solid"]
-{idm5792336 [label="Does the engine still not 
-start?" shape=diamond color=blue style="solid" fontcolor=black]} -> idm5789568 [xlabel="Yes" style="solid"]
-{idm5792336 [ style="solid" fontcolor=black]} -> idm5788560 [xlabel="No" style="solid"]
-{idm5789568 [label="Engine is flooded/other 
+again" shape=rectangle color=red style="solid" fontcolor=black]} -> idm5764896 [ style="solid"]
+{idm5764896 [label="Does the engine still not 
+start?" shape=diamond color=blue style="solid" fontcolor=black]} -> idm5762128 [xlabel="Yes" style="solid"]
+{idm5764896 [ style="solid" fontcolor=black]} -> idm5761120 [xlabel="No" style="solid"]
+{idm5762128 [label="Engine is flooded/other 
 technical issue, call 
 mechanic" shape=rectangle color=red style="solid" fontcolor=black]} [ style="solid"]
-{idm5788560 [label="Car is working" shape=rectangle color=red style="solid" fontcolor=black]} [ style="solid"]
+{idm5761120 [label="Car is working" shape=rectangle color=red style="solid" fontcolor=black]} [ style="solid"]
 }
