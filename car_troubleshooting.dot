@@ -1,18 +1,18 @@
 digraph g {
 graph [splines=ortho]
-{idm6154864 [label="Car will not start" shape=rectangle color=green style=solid fontcolor=black]} -> idm5797152 [ style=solid]
-{idm5797152 [label="Do warning lights appear?" shape=diamond color=blue style=solid fontcolor=black]} -> idm5794288 [xlabel="Yes" style=solid]
-{idm5797152 [ style=solid fontcolor=black]} -> idm5793280 [xlabel="No" style=solid]
-{idm5794288 [label="Battery is flat, call 
-mechanic" shape=rectangle color=red style=solid fontcolor=black]} [ style=solid]
-{idm5793280 [label="Lock & unlock car to disable 
+{idm6323392 [label="Car will not start" shape=rectangle color=green style="solid" fontcolor=black]} -> idm5796528 [ style="solid"]
+{idm5796528 [label="Do warning lights appear?" shape=diamond color=blue style="solid" fontcolor=black]} -> idm5793760 [xlabel="Yes" style="solid"]
+{idm5796528 [ style="solid" fontcolor=black]} -> idm5792752 [xlabel="No" style="solid"]
+{idm5793760 [label="Battery is flat, call 
+mechanic" shape=rectangle color=red style="solid" fontcolor=black]} [ style="solid"]
+{idm5792752 [label="Lock & unlock car to disable 
 immobiliser and try starting 
-again" shape=rectangle color=red style=solid fontcolor=black]} -> idm5792736 [ style=solid]
-{idm5792736 [label="Does the engine still not 
-start?" shape=diamond color=blue style=solid fontcolor=black]} -> idm5789968 [xlabel="Yes" style=solid]
-{idm5792736 [ style=solid fontcolor=black]} -> idm5788960 [xlabel="No" style=solid]
-{idm5789968 [label="Engine is flooded/other 
+again" shape=rectangle color=red style="solid" fontcolor=black]} -> idm5792208 [ style="solid"]
+{idm5792208 [label="Does the engine still not 
+start?" shape=diamond color=blue style="solid" fontcolor=black]} -> idm5789440 [xlabel="Yes" style="solid"]
+{idm5792208 [ style="solid" fontcolor=black]} -> idm5788432 [xlabel="No" style="solid"]
+{idm5789440 [label="Engine is flooded/other 
 technical issue, call 
-mechanic" shape=rectangle color=red style=solid fontcolor=black]} [ style=solid]
-{idm5788960 [label="Car is working" shape=rectangle color=red style=solid fontcolor=black]} [ style=solid]
+mechanic" shape=rectangle color=red style="solid" fontcolor=black]} [ style="solid"]
+{idm5788432 [label="Car is working" shape=rectangle color=red style="solid" fontcolor=black]} [ style="solid"]
 }

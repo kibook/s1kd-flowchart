@@ -158,6 +158,7 @@
     <xsl:param name="edge-style" select="$edge-style"/>
     <xsl:param name="edge-font-family" select="$edge-font-family"/>
     <xsl:param name="edge-font-size" select="$edge-font-size"/>
+    <xsl:param name="edge-arrow"/>
 
     <xsl:text>{</xsl:text>
     <xsl:value-of select="$id"/>
@@ -246,22 +247,26 @@
     </xsl:if>
 
     <xsl:if test="$edge-style">
-      <xsl:text> </xsl:text>
-      <xsl:text>style=</xsl:text>
+      <xsl:text> style="</xsl:text>
       <xsl:value-of select="$edge-style"/>
+      <xsl:text>"</xsl:text>
     </xsl:if>
 
     <xsl:if test="$edge-font-family">
-      <xsl:text> </xsl:text>
-      <xsl:text>fontname="</xsl:text>
+      <xsl:text> fontname="</xsl:text>
       <xsl:value-of select="$edge-font-family"/>
       <xsl:text>"</xsl:text>
     </xsl:if>
 
     <xsl:if test="$edge-font-size">
-      <xsl:text> </xsl:text>
-      <xsl:text>fontsize=</xsl:text>
+      <xsl:text> fontsize=</xsl:text>
       <xsl:value-of select="$edge-font-size"/>
+    </xsl:if>
+
+    <xsl:if test="$edge-arrow">
+      <xsl:text> arrowhead="</xsl:text>
+      <xsl:value-of select="$edge-arrow"/>
+      <xsl:text>"</xsl:text>
     </xsl:if>
 
     <xsl:text>]</xsl:text>
@@ -365,20 +370,19 @@
           <xsl:with-param name="target">
             <xsl:apply-templates select="../isolationStepAnswer/yesNoAnswer/yesAnswer" mode="id"/>
           </xsl:with-param>
+          <xsl:with-param name="edge-arrow">none</xsl:with-param>
         </xsl:call-template>
         <xsl:call-template name="dot-node">
           <xsl:with-param name="target">
             <xsl:apply-templates select="../isolationStepAnswer/yesNoAnswer/noAnswer" mode="id"/>
           </xsl:with-param>
+          <xsl:with-param name="edge-arrow">none</xsl:with-param>
         </xsl:call-template>
       </xsl:when>
       <xsl:otherwise>
         <xsl:variable name="yes" select="../isolationStepAnswer/yesNoAnswer/yesAnswer/@nextActionRefId"/>
         <xsl:variable name="no" select="../isolationStepAnswer/yesNoAnswer/noAnswer/@nextActionRefId"/>
         <xsl:call-template name="dot-node">
-          <xsl:with-param name="id">
-            <xsl:apply-templates select="." mode="id"/>
-          </xsl:with-param>
           <xsl:with-param name="label">
             <xsl:apply-templates select="." mode="label"/>
           </xsl:with-param>
@@ -392,9 +396,6 @@
           <xsl:with-param name="edge-label">Yes</xsl:with-param>
         </xsl:call-template>
         <xsl:call-template name="dot-node">
-          <xsl:with-param name="id">
-            <xsl:apply-templates select="." mode="id"/>
-          </xsl:with-param>
           <xsl:with-param name="target">
             <xsl:apply-templates select="//*[@id=$no]" mode="id"/>
           </xsl:with-param>
