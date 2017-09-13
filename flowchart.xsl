@@ -52,7 +52,7 @@
 
   <!-- Properties of answer nodes if $answer-nodes = true() -->
   <xsl:param name="answer-colour">yellow</xsl:param>
-  <xsl:param name="answer-shape">diamond</xsl:param>
+  <xsl:param name="answer-shape">oval</xsl:param>
   <xsl:param name="answer-style" select="$node-style"/>
   <xsl:param name="answer-font-colour" select="$node-font-colour"/>
 
