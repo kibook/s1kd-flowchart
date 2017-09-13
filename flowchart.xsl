@@ -499,6 +499,10 @@
         <xsl:with-param name="target">
           <xsl:apply-templates select="//*[@id=$id]" mode="id"/>
         </xsl:with-param>
+        <xsl:with-param name="tooltip">
+          <xsl:text>Step </xsl:text>
+          <xsl:apply-templates select="." mode="number"/>
+        </xsl:with-param>
       </xsl:call-template>
     </xsl:if>
   </xsl:template>
@@ -685,10 +689,10 @@
                 from="isolationProcedure" level="any"/>
   </xsl:template>
 
-  <xsl:template match="yesAnswer|noAnswer" mode="number">
+  <xsl:template match="yesAnswer|noAnswer|choice" mode="number">
     <xsl:apply-templates select="ancestor::isolationStep/isolationStepQuestion" mode="number"/>
     <xsl:text>.</xsl:text>
-    <xsl:number count="yesAnswer|noAnswer" level="single"/>
+    <xsl:number count="yesAnswer|noAnswer|choice" level="single"/>
   </xsl:template>
 
 </xsl:stylesheet>
