@@ -153,13 +153,21 @@
     <xsl:param name="font-family" select="$node-font-family"/>
     <xsl:param name="font-size" select="$node-font-size"/>
     <xsl:param name="target"/>
-    <xsl:param name="tooltip"/>
+    <xsl:param name="tooltip">
+      <xsl:apply-templates select="." mode="tooltip"/>
+    </xsl:param>
     <xsl:param name="edge-label"/>
     <xsl:param name="edge-colour" select="$edge-colour"/>
     <xsl:param name="edge-style" select="$edge-style"/>
     <xsl:param name="edge-font-family" select="$edge-font-family"/>
     <xsl:param name="edge-font-size" select="$edge-font-size"/>
     <xsl:param name="edge-arrow"/>
+    <xsl:param name="edge-tooltip">
+      <xsl:apply-templates select="." mode="tooltip"/>
+    </xsl:param>
+    <xsl:param name="edge-label-tooltip">
+      <xsl:apply-templates select="." mode="tooltip"/>
+    </xsl:param>
 
     <xsl:text>{</xsl:text>
     <xsl:value-of select="$id"/>
@@ -269,6 +277,18 @@
       <xsl:text>"</xsl:text>
     </xsl:if>
 
+    <xsl:if test="$edge-tooltip">
+      <xsl:text> tooltip="</xsl:text>
+      <xsl:value-of select="$edge-tooltip"/>
+      <xsl:text>"</xsl:text>
+    </xsl:if>
+
+    <xsl:if test="$edge-label-tooltip">
+      <xsl:text> labeltooltip="</xsl:text>
+      <xsl:value-of select="$edge-label-tooltip"/>
+      <xsl:text>"</xsl:text>
+    </xsl:if>
+
     <xsl:text>]</xsl:text>
 
     <xsl:text>&#10;</xsl:text>
@@ -352,10 +372,6 @@
           </xsl:when>
         </xsl:choose>
       </xsl:with-param>
-      <xsl:with-param name="tooltip">
-        <xsl:text>Step </xsl:text>
-        <xsl:apply-templates select="." mode="number"/>
-      </xsl:with-param>
     </xsl:call-template>
   </xsl:template>
 
@@ -383,15 +399,19 @@
             <xsl:apply-templates select="../isolationStepAnswer/yesNoAnswer/noAnswer" mode="id"/>
           </xsl:with-param>
           <xsl:with-param name="edge-arrow">none</xsl:with-param>
-          <xsl:with-param name="tooltip">
-            <xsl:text>Step </xsl:text>
-            <xsl:apply-templates select="." mode="number"/>
-          </xsl:with-param>
         </xsl:call-template>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:variable name="yes" select="../isolationStepAnswer/yesNoAnswer/yesAnswer/@nextActionRefId"/>
-        <xsl:variable name="no" select="../isolationStepAnswer/yesNoAnswer/noAnswer/@nextActionRefId"/>
+        <xsl:variable name="yesAnswer" select="../isolationStepAnswer/yesNoAnswer/yesAnswer"/>
+        <xsl:variable name="noAnswer" select="../isolationStepAnswer/yesNoAnswer/noAnswer"/>
+        <xsl:variable name="yes" select="$yesAnswer/@nextActionRefId"/>
+        <xsl:variable name="no" select="$noAnswer/@nextActionRefId"/>
+        <xsl:variable name="yes-num">
+          <xsl:apply-templates select="$yesAnswer" mode="tooltip"/>
+        </xsl:variable>
+        <xsl:variable name="no-num">
+          <xsl:apply-templates select="$noAnswer" mode="tooltip"/>
+        </xsl:variable>
         <xsl:call-template name="dot-node">
           <xsl:with-param name="label">
             <xsl:apply-templates select="." mode="label"/>
@@ -404,16 +424,16 @@
             <xsl:apply-templates select="//*[@id=$yes]" mode="id"/>
           </xsl:with-param>
           <xsl:with-param name="edge-label">Yes</xsl:with-param>
+          <xsl:with-param name="edge-tooltip" select="$yes-num"/>
+          <xsl:with-param name="edge-label-tooltip" select="$yes-num"/>
         </xsl:call-template>
         <xsl:call-template name="dot-node">
           <xsl:with-param name="target">
             <xsl:apply-templates select="//*[@id=$no]" mode="id"/>
           </xsl:with-param>
           <xsl:with-param name="edge-label">No</xsl:with-param>
-          <xsl:with-param name="tooltip">
-            <xsl:text>Step </xsl:text>
-            <xsl:apply-templates select="." mode="number"/>
-          </xsl:with-param>
+          <xsl:with-param name="edge-tooltip" select="$no-num"/>
+          <xsl:with-param name="edge-label-tooltip" select="$no-num"/>
         </xsl:call-template>
       </xsl:otherwise>
     </xsl:choose>
@@ -435,10 +455,6 @@
         <xsl:with-param name="font-colour" select="$answer-font-colour"/>
         <xsl:with-param name="target">
           <xsl:apply-templates select="//*[@id=$id]" mode="id"/>
-        </xsl:with-param>
-        <xsl:with-param name="tooltip">
-          <xsl:text>Step </xsl:text>
-          <xsl:apply-templates select="." mode="number"/>
         </xsl:with-param>
       </xsl:call-template>
     </xsl:if>
@@ -476,6 +492,7 @@
             <xsl:with-param name="target">
               <xsl:apply-templates select="//*[@id=$next]" mode="id"/>
             </xsl:with-param>
+            <xsl:with-param name="tooltip"/>
             <xsl:with-param name="edge-label">
               <xsl:apply-templates select="." mode="label"/>
             </xsl:with-param>
@@ -498,10 +515,6 @@
         <xsl:with-param name="font-colour" select="$answer-font-colour"/>
         <xsl:with-param name="target">
           <xsl:apply-templates select="//*[@id=$id]" mode="id"/>
-        </xsl:with-param>
-        <xsl:with-param name="tooltip">
-          <xsl:text>Step </xsl:text>
-          <xsl:apply-templates select="." mode="number"/>
         </xsl:with-param>
       </xsl:call-template>
     </xsl:if>
@@ -530,10 +543,6 @@
         <xsl:if test="position() != last()">
           <xsl:apply-templates select="following-sibling::*" mode="id"/>
         </xsl:if>
-      </xsl:with-param>
-      <xsl:with-param name="tooltip">
-        <xsl:text>Step </xsl:text>
-        <xsl:apply-templates select="." mode="number"/>
       </xsl:with-param>
     </xsl:call-template>
   </xsl:template>
@@ -693,6 +702,15 @@
     <xsl:apply-templates select="ancestor::isolationStep/isolationStepQuestion" mode="number"/>
     <xsl:text>.</xsl:text>
     <xsl:number count="yesAnswer|noAnswer|choice" level="single"/>
+  </xsl:template>
+
+  <xsl:template match="*" mode="tooltip">
+    <xsl:text>Step </xsl:text>
+    <xsl:apply-templates select="." mode="number"/>
+  </xsl:template>
+
+  <xsl:template match="preliminaryRqmts/reqCondGroup/*" mode="tooltip">
+    <xsl:text>Preliminary requirement</xsl:text>
   </xsl:template>
 
 </xsl:stylesheet>
