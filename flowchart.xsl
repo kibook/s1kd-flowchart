@@ -335,7 +335,7 @@
   <xsl:template match="isolationStep" mode="id">
     <xsl:choose>
       <xsl:when test="action">
-        <xsl:apply-templates select="action" mode="id"/>
+        <xsl:apply-templates select="action[1]" mode="id"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:apply-templates select="isolationStepQuestion" mode="id"/>
@@ -344,7 +344,7 @@
   </xsl:template>
 
   <xsl:template match="isolationProcedureEnd" mode="id">
-    <xsl:apply-templates select="action" mode="id"/>
+    <xsl:apply-templates select="action[1]" mode="id"/>
   </xsl:template>
 
   <!-- Action nodes -->
@@ -362,6 +362,9 @@
       <xsl:with-param name="font-colour" select="$action-font-colour"/>
       <xsl:with-param name="target">
         <xsl:choose>
+          <xsl:when test="following-sibling::action">
+            <xsl:apply-templates select="following-sibling::action[1]" mode="id"/>
+          </xsl:when>
           <xsl:when test="parent::isolationStep">
             <xsl:apply-templates select="../isolationStepQuestion" mode="id"/>
           </xsl:when>
