@@ -418,6 +418,7 @@
         <xsl:if test="$answer-nodes-same-rank">
           <xsl:text>{rank=same;</xsl:text>
           <xsl:apply-templates select="../isolationStepAnswer/yesNoAnswer/yesAnswer" mode="id"/>
+          <xsl:text> </xsl:text>
           <xsl:apply-templates select="../isolationStepAnswer/yesNoAnswer/noAnswer" mode="id"/>
           <xsl:text>}&#10;</xsl:text>
         </xsl:if>
