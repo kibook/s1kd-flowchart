@@ -483,6 +483,7 @@
         <xsl:when test="$answer-nodes">
           <xsl:call-template name="dot-node">
             <xsl:with-param name="id" select="$id"/>
+            <xsl:with-param name="edge-arrow">none</xsl:with-param>
             <xsl:with-param name="target">
               <xsl:apply-templates select="." mode="id"/>
             </xsl:with-param>
