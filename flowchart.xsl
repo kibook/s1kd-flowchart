@@ -50,6 +50,10 @@
        and next action. -->
   <xsl:param name="answer-nodes" select="false()"/>
 
+  <!-- When true, ensure all answer nodes in a group are placed on the same
+       line by giving them the same rank. -->
+  <xsl:param name="answer-nodes-same-rank" select="true()"/>
+
   <!-- Properties of answer nodes if $answer-nodes = true() -->
   <xsl:param name="answer-colour">yellow</xsl:param>
   <xsl:param name="answer-shape">oval</xsl:param>
@@ -77,7 +81,10 @@
   <xsl:param name="dummy-noconds-action" select="false()"/>
   <!-- The label for the 'dummy' node described above. -->
   <xsl:param name="dummy-noconds-label">End of procedure</xsl:param>
-  
+
+  <!-- When true, include the dmTitle as a label for the graph -->
+  <xsl:param name="label-graph" select="false()"/>
+
   <xsl:output method="text"/>
 
   <!-- Wrap text function -->
@@ -302,6 +309,11 @@
     <xsl:text>&#10;</xsl:text>
     <xsl:text>graph [splines=</xsl:text>
     <xsl:value-of select="$splines"/>
+    <xsl:if test="$label-graph">
+      <xsl:text> label="</xsl:text>
+      <xsl:apply-templates select="//dmAddressItems/dmTitle"/>
+      <xsl:text>"</xsl:text>
+    </xsl:if>
     <xsl:text>]&#10;</xsl:text>
     <xsl:apply-templates select="//isolationProcedure"/>
     <xsl:text>}</xsl:text>
@@ -504,6 +516,14 @@
         </xsl:otherwise>
       </xsl:choose>
     </xsl:for-each>
+    <xsl:if test="$answer-nodes-same-rank">
+      <xsl:text>{rank=same;</xsl:text>
+      <xsl:for-each select="following-sibling::isolationStepAnswer/listOfChoices/choice">
+        <xsl:text> </xsl:text>
+        <xsl:apply-templates select="." mode="id"/>
+      </xsl:for-each>
+      <xsl:text>}</xsl:text>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template match="choice">
