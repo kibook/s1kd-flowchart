@@ -415,6 +415,12 @@
           </xsl:with-param>
           <xsl:with-param name="edge-arrow">none</xsl:with-param>
         </xsl:call-template>
+        <xsl:if test="$answer-nodes-same-rank">
+          <xsl:text>{rank=same;</xsl:text>
+          <xsl:apply-templates select="../isolationStepAnswer/yesNoAnswer/yesAnswer" mode="id"/>
+          <xsl:apply-templates select="../isolationStepAnswer/yesNoAnswer/noAnswer" mode="id"/>
+          <xsl:text>}&#10;</xsl:text>
+        </xsl:if>
       </xsl:when>
       <xsl:otherwise>
         <xsl:variable name="yesAnswer" select="../isolationStepAnswer/yesNoAnswer/yesAnswer"/>
@@ -516,13 +522,13 @@
         </xsl:otherwise>
       </xsl:choose>
     </xsl:for-each>
-    <xsl:if test="$answer-nodes-same-rank">
+    <xsl:if test="$answer-nodes and $answer-nodes-same-rank">
       <xsl:text>{rank=same;</xsl:text>
       <xsl:for-each select="following-sibling::isolationStepAnswer/listOfChoices/choice">
         <xsl:text> </xsl:text>
         <xsl:apply-templates select="." mode="id"/>
       </xsl:for-each>
-      <xsl:text>}</xsl:text>
+      <xsl:text>}&#10;</xsl:text>
     </xsl:if>
   </xsl:template>
 
