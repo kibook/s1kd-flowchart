@@ -44,6 +44,24 @@
   <xsl:param name="close-style" select="$node-style"/>
   <xsl:param name="close-font-colour" select="$node-font-colour"/>
 
+  <!-- Warning nodes -->
+  <xsl:param name="warning-colour">red</xsl:param>
+  <xsl:param name="warning-shape">rectangle</xsl:param>
+  <xsl:param name="warning-style" select="$node-style"/>
+  <xsl:param name="warning-font-colour" select="$node-font-colour"/>
+
+  <!-- Caution nodes -->
+  <xsl:param name="caution-colour">yellow</xsl:param>
+  <xsl:param name="caution-shape">rectangle</xsl:param>
+  <xsl:param name="caution-style" select="$node-style"/>
+  <xsl:param name="caution-font-colour" select="$node-font-colour"/>
+
+  <!-- Note nodes -->
+  <xsl:param name="note-colour">gray</xsl:param>
+  <xsl:param name="note-shape">note</xsl:param>
+  <xsl:param name="note-style" select="$node-style"/>
+  <xsl:param name="note-font-colour" select="$node-font-colour"/>
+
   <!-- When true, answers (yes/no/choices) are displayed as their own nodes.
 
        When false, answers are written as labels on the edge between the step
@@ -345,22 +363,77 @@
 
   <!-- Point to either the action, or the question if there is no action -->
   <xsl:template match="isolationStep" mode="id">
-    <xsl:choose>
-      <xsl:when test="action">
-        <xsl:apply-templates select="action[1]" mode="id"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:apply-templates select="isolationStepQuestion" mode="id"/>
-      </xsl:otherwise>
-    </xsl:choose>
+    <xsl:apply-templates select="(warning|caution|note|action|isolationStepQuestion)[1]" mode="id"/>
   </xsl:template>
 
   <xsl:template match="isolationProcedureEnd" mode="id">
-    <xsl:apply-templates select="action[1]" mode="id"/>
+    <xsl:apply-templates select="(warning|caution|note|action)[1]" mode="id"/>
+  </xsl:template>
+
+  <!-- Warning and caution nodes -->
+  <xsl:template match="warning">
+    <xsl:variable name="next" select="(following-sibling::warning|following-sibling::caution|following-sibling::note|following-sibling::action|../isolationStepQuestion|//closeRqmts[not(reqCondGroup/noConds)])[1]"/>
+    <xsl:call-template name="dot-node">
+      <xsl:with-param name="label">
+        <xsl:text>WARNING&#10;&#10;</xsl:text>
+        <xsl:apply-templates select="." mode="label"/>
+      </xsl:with-param>
+      <xsl:with-param name="shape" select="$warning-shape"/>
+      <xsl:with-param name="colour" select="$warning-colour"/>
+      <xsl:with-param name="style" select="$warning-style"/>
+      <xsl:with-param name="font-colour" select="$warning-font-colour"/>
+      <xsl:with-param name="target">
+        <xsl:apply-templates select="$next" mode="id"/>
+      </xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template match="caution">
+    <xsl:variable name="next" select="(following-sibling::caution|following-sibling::note|following-sibling::action|../isolationStepQuestion|//closeRqmts[not(reqCondGroup/noConds)])[1]"/>
+    <xsl:call-template name="dot-node">
+      <xsl:with-param name="label">
+        <xsl:text>CAUTION&#10;&#10;</xsl:text>
+        <xsl:apply-templates select="." mode="label"/>
+      </xsl:with-param>
+      <xsl:with-param name="shape" select="$caution-shape"/>
+      <xsl:with-param name="colour" select="$caution-colour"/>
+      <xsl:with-param name="style" select="$caution-style"/>
+      <xsl:with-param name="font-colour" select="$caution-font-colour"/>
+      <xsl:with-param name="target">
+        <xsl:apply-templates select="$next" mode="id"/>
+      </xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template match="warningAndCautionPara">
+    <xsl:apply-templates/>
+  </xsl:template>
+
+  <!-- Note nodes -->
+  <xsl:template match="note">
+    <xsl:variable name="next" select="(following-sibling::note|following-sibling::action|../isolationStepQuestion|//closeRqmts[not(reqCondGroup/noConds)])[1]"/>
+    <xsl:call-template name="dot-node">
+      <xsl:with-param name="label">
+        <xsl:text>NOTE&#10;&#10;</xsl:text>
+        <xsl:apply-templates select="." mode="label"/>
+      </xsl:with-param>
+      <xsl:with-param name="shape" select="$note-shape"/>
+      <xsl:with-param name="colour" select="$note-colour"/>
+      <xsl:with-param name="style" select="$note-style"/>
+      <xsl:with-param name="font-colour" select="$note-font-colour"/>
+      <xsl:with-param name="target">
+        <xsl:apply-templates select="$next" mode="id"/>
+      </xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template match="notePara">
+    <xsl:apply-templates/>
   </xsl:template>
 
   <!-- Action nodes -->
   <xsl:template match="action">
+    <xsl:variable name="next" select="(following-sibling::note|following-sibling::action|../isolationStepQuestion|//closeRqmts[not(reqCondGroup/noConds)])[1]"/>
     <xsl:call-template name="dot-node">
       <xsl:with-param name="id">
         <xsl:apply-templates select="." mode="id"/>
@@ -373,19 +446,7 @@
       <xsl:with-param name="style" select="$action-style"/>
       <xsl:with-param name="font-colour" select="$action-font-colour"/>
       <xsl:with-param name="target">
-        <xsl:choose>
-          <xsl:when test="following-sibling::action">
-            <xsl:apply-templates select="following-sibling::action[1]" mode="id"/>
-          </xsl:when>
-          <xsl:when test="parent::isolationStep">
-            <xsl:apply-templates select="../isolationStepQuestion" mode="id"/>
-          </xsl:when>
-          <xsl:when test="parent::isolationProcedureEnd">
-            <xsl:if test="not(//closeRqmts/reqCondGroup/noConds)">
-              <xsl:apply-templates select="//closeRqmts" mode="id"/>
-            </xsl:if>
-          </xsl:when>
-        </xsl:choose>
+        <xsl:apply-templates select="$next" mode="id"/>
       </xsl:with-param>
     </xsl:call-template>
   </xsl:template>
@@ -714,7 +775,10 @@
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="action|
+  <xsl:template match="warning|
+                       caution|
+                       note|
+                       action|
                        isolationStepQuestion|
                        closeRqmts/reqCondGroup/reqCondNoRef|
                        closeRqmts/reqCondGroup/reqCondDm|
