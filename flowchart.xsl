@@ -103,6 +103,12 @@
   <!-- When true, include the dmTitle as a label for the graph -->
   <xsl:param name="label-graph" select="false()"/>
 
+  <!-- Use HTML-like features for labels.
+
+       Currently this prevents the use of special characters like < and > in
+       labels, however. -->
+  <xsl:param name="html-labels" select="false()"/>
+
   <xsl:output method="text"/>
 
   <!-- Wrap text function -->
@@ -201,9 +207,18 @@
 
     <xsl:if test="$label">
       <xsl:value-of select="$node-label-type"/>
-      <xsl:text>="</xsl:text>
-      <xsl:value-of select="$label"/>
-      <xsl:text>"</xsl:text>
+      <xsl:choose>
+        <xsl:when test="$html-labels">
+          <xsl:text>=&lt;</xsl:text>
+          <xsl:value-of select="$label"/>
+          <xsl:text>&gt;</xsl:text>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:text>="</xsl:text>
+          <xsl:value-of select="$label"/>
+          <xsl:text>"</xsl:text>
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:if>
 
     <xsl:if test="$shape">
@@ -375,7 +390,14 @@
     <xsl:variable name="next" select="(following-sibling::warning|following-sibling::caution|following-sibling::note|following-sibling::action|../isolationStepQuestion|//closeRqmts[not(reqCondGroup/noConds)])[1]"/>
     <xsl:call-template name="dot-node">
       <xsl:with-param name="label">
-        <xsl:text>WARNING&#10;&#10;</xsl:text>
+        <xsl:if test="$html-labels">
+          <xsl:text>&lt;B&gt;</xsl:text>
+        </xsl:if>
+        <xsl:text>WARNING</xsl:text>
+        <xsl:if test="$html-labels">
+          <xsl:text>&lt;/B&gt;</xsl:text>
+        </xsl:if>
+        <xsl:text>&#10;&#10;</xsl:text>
         <xsl:apply-templates select="." mode="label"/>
       </xsl:with-param>
       <xsl:with-param name="shape" select="$warning-shape"/>
@@ -392,7 +414,14 @@
     <xsl:variable name="next" select="(following-sibling::caution|following-sibling::note|following-sibling::action|../isolationStepQuestion|//closeRqmts[not(reqCondGroup/noConds)])[1]"/>
     <xsl:call-template name="dot-node">
       <xsl:with-param name="label">
-        <xsl:text>CAUTION&#10;&#10;</xsl:text>
+        <xsl:if test="$html-labels">
+          <xsl:text>&lt;B&gt;</xsl:text>
+        </xsl:if>
+        <xsl:text>CAUTION</xsl:text>
+        <xsl:if test="$html-labels">
+          <xsl:text>&lt;/B&gt;</xsl:text>
+        </xsl:if>
+        <xsl:text>&#10;&#10;</xsl:text>
         <xsl:apply-templates select="." mode="label"/>
       </xsl:with-param>
       <xsl:with-param name="shape" select="$caution-shape"/>
@@ -414,7 +443,14 @@
     <xsl:variable name="next" select="(following-sibling::note|following-sibling::action|../isolationStepQuestion|//closeRqmts[not(reqCondGroup/noConds)])[1]"/>
     <xsl:call-template name="dot-node">
       <xsl:with-param name="label">
-        <xsl:text>NOTE&#10;&#10;</xsl:text>
+        <xsl:if test="$html-labels">
+          <xsl:text>&lt;B&gt;</xsl:text>
+        </xsl:if>
+        <xsl:text>NOTE</xsl:text>
+        <xsl:if test="$html-labels">
+          <xsl:text>&lt;/B&gt;</xsl:text>
+        </xsl:if>
+        <xsl:text>&#10;&#10;</xsl:text>
         <xsl:apply-templates select="." mode="label"/>
       </xsl:with-param>
       <xsl:with-param name="shape" select="$note-shape"/>
@@ -732,12 +768,82 @@
 
   <!-- Handle additional inline text elements.
 
-       TODO: Use HTML-like labels to better handle some of these elements. -->
+       TODO: Escape < and > in normal text so HTML labels can always be used
+             and the non-HTML alternatives are not needed.-->
 
   <xsl:template match="emphasis">
-    <xsl:text>*</xsl:text>
-    <xsl:apply-templates/>
-    <xsl:text>*</xsl:text>
+    <xsl:choose>
+      <xsl:when test="$html-labels">
+        <xsl:text>&lt;B&gt;</xsl:text>
+        <xsl:apply-templates/>
+        <xsl:text>&lt;/B&gt;</xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:text>*</xsl:text>
+        <xsl:apply-templates/>
+        <xsl:text>*</xsl:text>a
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="emphasis[@emphasisType='em02']">
+    <xsl:choose>
+      <xsl:when test="$html-labels">
+        <xsl:text>&lt;I&gt;</xsl:text>
+        <xsl:apply-templates/>
+        <xsl:text>&lt;/I&gt;</xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:text>/</xsl:text>
+        <xsl:apply-templates/>
+        <xsl:text>/</xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="emphasis[@emphasisType='em03']">
+    <xsl:choose>
+      <xsl:when test="$html-labels">
+        <xsl:text>&lt;U&gt;</xsl:text>
+        <xsl:apply-templates/>
+        <xsl:text>&lt;/U&gt;</xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:text>_</xsl:text>
+        <xsl:apply-templates/>
+        <xsl:text>_</xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="emphasis[@emphasisType='em04']">
+    <xsl:choose>
+      <xsl:when test="$html-labels">
+        <xsl:text>&lt;O&gt;</xsl:text>
+        <xsl:apply-templates/>
+        <xsl:text>&lt;/O&gt;</xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:text>`</xsl:text>
+        <xsl:apply-templates/>
+        <xsl:text>`</xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="emphasis[@emphasisType='em05']">
+    <xsl:choose>
+      <xsl:when test="$html-labels">
+        <xsl:text>&lt;S&gt;</xsl:text>
+        <xsl:apply-templates/>
+        <xsl:text>&lt;/S&gt;</xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:text>-</xsl:text>
+        <xsl:apply-templates/>
+        <xsl:text>-</xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template match="inlineSignificantData">
@@ -745,14 +851,32 @@
   </xsl:template>
 
   <xsl:template match="superScript">
-    <xsl:text>^</xsl:text>
-    <xsl:apply-templates/>
+    <xsl:choose>
+      <xsl:when test="$html-labels">
+        <xsl:text>&lt;SUP&gt;</xsl:text>
+        <xsl:apply-templates/>
+        <xsl:text>&lt;/SUP&gt;</xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:text>^</xsl:text>
+        <xsl:apply-templates/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template match="subScript">
-    <xsl:text>(</xsl:text>
-    <xsl:apply-templates/>
-    <xsl:text>)</xsl:text>
+    <xsl:choose>
+      <xsl:when test="$html-labels">
+        <xsl:text>&lt;SUB&gt;</xsl:text>
+        <xsl:apply-templates/>
+        <xsl:text>&lt;/SUB&gt;</xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:text>(</xsl:text>
+        <xsl:apply-templates/>
+        <xsl:text>)</xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template match="acronym">
@@ -764,7 +888,16 @@
   </xsl:template>
 
   <xsl:template match="verbatimText">
-    <xsl:apply-templates/>
+    <xsl:choose>
+      <xsl:when test="$html-labels">
+        <xsl:text>&lt;FONT FACE="monospace"&gt;</xsl:text>
+        <xsl:apply-templates/>
+        <xsl:text>&lt;/FONT&gt;</xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template match="dmTitle">
