@@ -1,18 +1,18 @@
 digraph "Car - General fault isolation procedure" {
 graph [splines=ortho]
-{idm6086736 [label="Car will not start" shape=rectangle color=green style="solid" fontcolor=black tooltip="Preliminary requirement"]} -> idm5600576 [ style="solid" tooltip="Preliminary requirement" labeltooltip="Preliminary requirement"]
-{idm5600576 [label="Do warning lights appear?" shape=diamond color=blue style="solid" fontcolor=black tooltip="Step 1"]} -> idm5597808 [xlabel="Yes" style="solid" tooltip="Step 1.1" labeltooltip="Step 1.1"]
-{idm5600576 [ style="solid" fontcolor=black tooltip="Step 1"]} -> idm5596800 [xlabel="No" style="solid" tooltip="Step 1.2" labeltooltip="Step 1.2"]
-{idm5597808 [label="Battery is flat, call 
+{idm6276704 [label="Car will not start" shape=rectangle color=green style="solid" fontcolor=black tooltip="Preliminary requirement"]} -> idm5499824 [ style="solid" tooltip="Preliminary requirement" labeltooltip="Preliminary requirement"]
+{idm5499824 [label="Do warning lights appear?" shape=diamond color=blue style="solid" fontcolor=black tooltip="Step 1"]} -> idm5496960 [xlabel=" Yes " style="solid" tooltip="Step 1.1" labeltooltip="Step 1.1"]
+{idm5499824 [ style="solid" fontcolor=black tooltip="Step 1"]} -> idm5495952 [xlabel=" No " style="solid" tooltip="Step 1.2" labeltooltip="Step 1.2"]
+{idm5496960 [label="Battery is flat, call 
 mechanic" shape=rectangle color=red style="solid" fontcolor=black tooltip="Step 2"]} [ style="solid" tooltip="Step 2" labeltooltip="Step 2"]
-{idm5596800 [label="Lock & unlock car to disable 
+{idm5495952 [label="Lock & unlock car to disable 
 immobiliser and try starting 
-again" shape=rectangle color=red style="solid" fontcolor=black tooltip="Step 3"]} -> idm5596256 [ style="solid" tooltip="Step 3" labeltooltip="Step 3"]
-{idm5596256 [label="Does the engine still not 
-start?" shape=diamond color=blue style="solid" fontcolor=black tooltip="Step 4"]} -> idm5593488 [xlabel="Yes" style="solid" tooltip="Step 4.1" labeltooltip="Step 4.1"]
-{idm5596256 [ style="solid" fontcolor=black tooltip="Step 4"]} -> idm5592480 [xlabel="No" style="solid" tooltip="Step 4.2" labeltooltip="Step 4.2"]
-{idm5593488 [label="Engine is flooded/other 
+again" shape=rectangle color=red style="solid" fontcolor=black tooltip="Step 3"]} -> idm5495408 [ style="solid" tooltip="Step 3" labeltooltip="Step 3"]
+{idm5495408 [label="Does the engine still not 
+start?" shape=diamond color=blue style="solid" fontcolor=black tooltip="Step 4"]} -> idm5492640 [xlabel=" Yes " style="solid" tooltip="Step 4.1" labeltooltip="Step 4.1"]
+{idm5495408 [ style="solid" fontcolor=black tooltip="Step 4"]} -> idm5491632 [xlabel=" No " style="solid" tooltip="Step 4.2" labeltooltip="Step 4.2"]
+{idm5492640 [label="Engine is flooded/other 
 technical issue, call 
 mechanic" shape=rectangle color=red style="solid" fontcolor=black tooltip="Step 5"]} [ style="solid" tooltip="Step 5" labeltooltip="Step 5"]
-{idm5592480 [label="Car is working" shape=rectangle color=red style="solid" fontcolor=black tooltip="Step 6"]} [ style="solid" tooltip="Step 6" labeltooltip="Step 6"]
+{idm5491632 [label="Car is working" shape=rectangle color=red style="solid" fontcolor=black tooltip="Step 6"]} [ style="solid" tooltip="Step 6" labeltooltip="Step 6"]
 }

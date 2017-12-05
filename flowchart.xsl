@@ -109,6 +109,9 @@
        labels, however. -->
   <xsl:param name="html-labels" select="false()"/>
 
+  <!-- Content to pad edge labels with -->
+  <xsl:param name="edge-label-padding"><xsl:text> </xsl:text></xsl:param>
+
   <xsl:output method="text"/>
 
   <!-- Wrap text function -->
@@ -284,7 +287,9 @@
     <xsl:if test="$edge-label">
       <xsl:value-of select="$edge-label-type"/>
       <xsl:text>="</xsl:text>
+      <xsl:value-of select="$edge-label-padding"/>
       <xsl:value-of select="$edge-label"/>
+      <xsl:value-of select="$edge-label-padding"/>
       <xsl:text>"</xsl:text>
     </xsl:if>
 
