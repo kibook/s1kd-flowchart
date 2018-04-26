@@ -1,0 +1,24 @@
+#!/bin/sh
+
+XSL="$(dirname "$0")/../share/xml/s1000d/stylesheet/flowchart.xsl"
+
+while getopts h opt
+do
+	case $opt in
+		h|?)
+			echo "Usage: s1kd-flowchart <dmodule>"
+			;;
+	esac
+done
+
+shift $((OPTIND - 1))
+
+SRC="$1"
+shift
+
+if test -z "$OUT"
+then
+	OUT="$(echo "$SRC"|rev|cut -d. -f2-|rev).dot"
+fi
+
+xsltproc "$@" "$XSL" "$SRC" > "$OUT"
