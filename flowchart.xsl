@@ -387,7 +387,14 @@
   </xsl:template>
 
   <xsl:template match="isolationProcedureEnd" mode="id">
-    <xsl:apply-templates select="(warning|caution|note|action)[1]" mode="id"/>
+    <xsl:choose>
+      <xsl:when test="warning|caution|note|action">
+        <xsl:apply-templates select="(warning|caution|note|action)[1]" mode="id"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates select="//closeRqmts" mode="id"/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <!-- Warning and caution nodes -->
