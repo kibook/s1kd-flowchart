@@ -952,5 +952,8 @@
   <xsl:template match="preliminaryRqmts/reqCondGroup/*" mode="tooltip">
     <xsl:text>Preliminary requirement</xsl:text>
   </xsl:template>
+  
+  <!-- Not handled yet. -->
+  <xsl:template match="table"/>
 
 </xsl:stylesheet>
