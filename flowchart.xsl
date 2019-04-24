@@ -112,6 +112,9 @@
   <!-- Content to pad edge labels with -->
   <xsl:param name="edge-label-padding"><xsl:text> </xsl:text></xsl:param>
 
+  <!-- Rank direction of the graph. -->
+  <xsl:param name="rank-dir"/>
+
   <xsl:output method="text"/>
 
   <!-- Wrap text function -->
@@ -350,6 +353,11 @@
     <xsl:if test="$label-graph">
       <xsl:text> label="</xsl:text>
       <xsl:apply-templates select="//dmAddressItems/dmTitle"/>
+      <xsl:text>"</xsl:text>
+    </xsl:if>
+    <xsl:if test="$rank-dir">
+      <xsl:text> rankdir="</xsl:text>
+      <xsl:value-of select="$rankdir"/>
       <xsl:text>"</xsl:text>
     </xsl:if>
     <xsl:text>]&#10;</xsl:text>
