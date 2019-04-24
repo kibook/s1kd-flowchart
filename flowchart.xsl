@@ -357,7 +357,7 @@
     </xsl:if>
     <xsl:if test="$rank-dir">
       <xsl:text> rankdir="</xsl:text>
-      <xsl:value-of select="$rankdir"/>
+      <xsl:value-of select="$rank-dir"/>
       <xsl:text>"</xsl:text>
     </xsl:if>
     <xsl:text>]&#10;</xsl:text>
